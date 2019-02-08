@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.wz.sys.dao.ArticleDao">
+
+	<sql id="queryWhere">
+		<where>
+			<if test="article.r_author!=null and article.r_author!=''">
+				and r_author=#{article.r_author}
+			</if>
+			<if test="
+                article.r_verify!=null ">
+				and r_verify=#{article.r_verify}
+			</if>
+			<if test="article.r_publish!=null">
+				and r_publish=#{article.r_publish}
+			</if>
+			<if test="article.r_status!=null">
+				and r_status=#{article.r_status}
+			</if>
+		</where>
+	</sql>
+	<!-- 分页查询 -->
+	<select id="findPageObjects"
+		resultType="cn.wz.sys.entity.Article">
+		select * from article
+		<include refid="queryWhere"></include>
+		<if test="startIndex != null and pageSize != null">
+			limit #{startIndex},#{pageSize}
+		</if>
+	</select>
+
+	<!-- 查询总记录数 -->
+	<select id="getRowCount" resultType="int">
+		select count(*) from article
+		<include refid="queryWhere"></include>
+	</select>
+
+	<!-- 根据ID查询 -->
+	<select id="findById" parameterType="int"
+		resultType="cn.wz.sys.entity.Article">
+		select * from article where r_id = #{r_id}
+	</select>
+
+	<!-- 更新功能 -->
+	<update id="update" parameterType="cn.wz.sys.entity.Article">
+		update article set
+		r_id =
+		#{r_id},
+		r_author = #{r_author},
+		r_summary = #{r_summary},
+		r_content =
+		#{r_content},
+		r_date = #{r_date},
+		r_verify = #{r_verify},
+		r_publish =
+		#{r_publish},
+		r_status = #{r_status}
+		where r_id = #{r_id}
+	</update>
+
+	<!-- 保存文章信息的方法 -->
+	<insert id="saveArticle"
+		parameterType="cn.wz.sys.entity.Article">
+		insert into article(
+		r_author,
+		r_summary,
+		r_content,
+		r_date,
+		r_verify,
+		r_publish,
+		r_status)
+		values(
+		#{r_author},
+		#{r_summary},
+		#{r_content},
+		#{r_date},
+		#{r_verify},
+		#{r_publish},
+		#{r_status}
+		)
+	</insert>
+
+	<!-- 文章删除功能（仅把文章放入到回收站） -->
+	<update id="changeStatus">
+		update article set
+		r_status = 1 where r_id in
+		<foreach collection="ids" separator="," open="(" close=")"
+			item="id">
+			#{id}
+		</foreach>
+	</update>
+
+	<!-- 删除功能（永久删除信息） -->
+	<delete id="deleteArticle">
+		delete from article where r_id in
+		<foreach collection="ids" separator="," open="(" close=")"
+			item="id">
+			#{id}
+		</foreach>
+	</delete>
+
+	<update id="restoreArticle">
+		update article set r_status=0 where r_id=#{r_id}
+	</update>
+</mapper>

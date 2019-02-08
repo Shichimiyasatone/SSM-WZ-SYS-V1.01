@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.wz.sys.dao.WordsDao">
+
+
+	<!-- 查询所有留言信息 -->
+	<select id="findByWords" resultType="cn.wz.sys.entity.Words">
+		select * from words
+	</select>
+
+	<!-- 保存留言信息 -->
+	<insert id="saveWords" parameterType="cn.wz.sys.entity.Words">
+		insert into words(
+		lw_name,
+		lw_date,
+		lw_content,
+		lw_for_name,
+		lw_for_article_id
+		)
+		values(
+		#{lw_name},
+		#{lw_date},
+		#{lw_content},
+		#{lw_for_name},
+		#{lw_for_article_id}
+		)
+	</insert>
+
+</mapper>
